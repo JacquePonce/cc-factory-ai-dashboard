@@ -41,7 +41,9 @@ def run_sql(query, token):
     }
 
     resp = requests.post(f"{DATABRICKS_HOST}/api/2.0/sql/statements", headers=headers, json=payload)
-    resp.raise_for_status()
+    if resp.status_code != 200:
+        print(f"HTTP {resp.status_code}: {resp.text}", file=sys.stderr)
+        resp.raise_for_status()
     data = resp.json()
 
     if data["status"]["state"] == "PENDING":
